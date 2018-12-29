@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pinkPrimaryDarkChat"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circlePhotoProfileCreator"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+
+        />
+
+    <TextView
+        android:id="@+id/textViewProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="50sp"
+        android:text="Click the camera to choose your profile photo."
+        android:textAlignment="center"
+        android:textColor="#fff" />
+
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="106dp"
+        android:layout_height="58dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Save" />
+
+</android.support.v7.widget.LinearLayoutCompat>

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "869836264626-fm55po4708ho1fa2pi65sk62ipl0ac0m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mateusz.chatapplication",
+            "certificate_hash": "d3fd9c8aa45b417a0b769d140327044c1c064941"
+          }
+        },
+        {
           "client_id": "869836264626-nrs25eosa7umkorkclea6kiemo35hmdh.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "869836264626-nrs25eosa7umkorkclea6kiemo35hmdh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

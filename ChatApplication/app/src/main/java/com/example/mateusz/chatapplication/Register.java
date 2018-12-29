@@ -19,6 +19,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 /**
  * Created by Mateusz on 27.12.2018.
@@ -30,6 +35,9 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     private EditText email;
     private EditText password;
     private TextView alreadyText;
+    DatabaseReference reference;
+    private EditText username;
+
 
     private FirebaseAuth firebaseAuth;
 
@@ -40,6 +48,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.activity_main);
 
         email = (EditText) findViewById(R.id.emailText);
+        username = findViewById(R.id.usernameTextReg);
         password = (EditText) findViewById(R.id.passText);
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -50,6 +59,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     private void registerUser(){
         String emailString = email.getText().toString().trim();
         String passwordString = password.getText().toString().trim();
+        final String usernameString = username.getText().toString().trim();
 
         if(emailString.isEmpty()){
             //email is empty
@@ -81,9 +91,28 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     //user registered succesfully
-                    finish();
-                    Toast.makeText(Register.this, "Registered succesfully!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Register.this, Chat.class));
+                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                    assert firebaseUser != null;
+                    String userid = firebaseUser.getUid();
+                    reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put("id", userid);
+                    hashMap.put("username", usernameString);
+                    hashMap.put("imageURL", "default");
+                    hashMap.put("status", "offline");
+                    hashMap.put("search", usernameString.toLowerCase());
+                    reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Toast.makeText(Register.this, "Registered succesfully!", Toast.LENGTH_SHORT).show();
+                                finish();
+                                startActivity(new Intent(Register.this, ProfileCreator.class));
+                            }
+                        }
+                    });
+
                 }
                 else {
                     //user registration failure

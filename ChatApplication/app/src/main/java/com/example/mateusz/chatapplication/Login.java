@@ -30,13 +30,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.activity_login2);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        loginEmail = (EditText) findViewById(R.id.emailTextLogin);
-        loginPassword = (EditText) findViewById(R.id.passTextLogin);
+        loginEmail = findViewById(R.id.emailTextLogin);
+        loginPassword = findViewById(R.id.passTextLogin);
 
-        findViewById(R.id.signInButton).setOnClickListener(this);
+        findViewById(R.id.signInButtonLogin).setOnClickListener(this);
         findViewById(R.id.signUpText).setOnClickListener(this);
 
     }
+
 
     private void userLogin() {
         String emailStringLogin = loginEmail.getText().toString().trim();
@@ -54,13 +55,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             return;
         }
 
-        if(!Patterns.EMAIL_ADDRESS.matcher(emailStringLogin).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(emailStringLogin).matches()) {
             loginEmail.setError("Please enter valid email address.");
             loginEmail.requestFocus();
             return;
         }
 
-        if(passwordStringLogin.length() < 6){
+        if (passwordStringLogin.length() < 6) {
             loginPassword.setError("Minimum 6 characters.");
             loginPassword.requestFocus();
             return;
@@ -69,14 +70,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         firebaseAuth.signInWithEmailAndPassword(emailStringLogin, passwordStringLogin).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     finish();
                     Toast.makeText(Login.this, "Logged in succesfully!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Login.this, Chat.class);
+                    Intent intent = new Intent(Login.this, ProfileCreator.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                }
-                else {
+                } else {
                     Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -86,15 +86,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
+        if (firebaseAuth.getCurrentUser() != null) {
+            finish();
+            startActivity(new Intent(this, ProfileCreator.class));
+        }
     }
 
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.signInButton) {
+        if (view.getId() == R.id.signInButtonLogin) {
             userLogin();
         }
-        if(view.getId() == R.id.signUpText){
+        if (view.getId() == R.id.signUpText) {
             //open register activity
             finish();
             startActivity(new Intent(this, Register.class));

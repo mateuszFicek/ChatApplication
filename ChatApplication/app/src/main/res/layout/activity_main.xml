@@ -34,6 +34,14 @@
             app:layout_constraintVertical_bias="0.859" />
 
         <EditText
+            android:id="@+id/usernameTextReg"
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Username"
+            android:inputType="textPersonName" />
+
+        <EditText
             android:id="@+id/passText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
