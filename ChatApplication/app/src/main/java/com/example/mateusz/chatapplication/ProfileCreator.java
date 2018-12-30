@@ -8,16 +8,22 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.mateusz.chatapplication.Model.User;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -43,6 +49,7 @@ public class ProfileCreator extends AppCompatActivity {
     DatabaseReference reference;
     StorageReference storageReference;
     String profileImageUrl;
+    ProgressBar progressBar;
     private static final int IMAGE_REQUEST = 1;
 
 
@@ -53,14 +60,35 @@ public class ProfileCreator extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_creator);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
-
+        progressBar = findViewById(R.id.progress);
+        progressBar.setVisibility(View.VISIBLE);
         camera = findViewById(R.id.circlePhotoProfileCreator);
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openImage();
+            }
+        });
+        Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher).into(camera);
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (!user.getImageURL().equals("default")){
+                    progressBar.setVisibility(View.VISIBLE);
+                    finish();
+                    startActivity(new Intent(ProfileCreator.this, Chat.class));
+                }
+                else{
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
 
@@ -137,5 +165,10 @@ public class ProfileCreator extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, CHOOSE_IMAGE);
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
     }
 }

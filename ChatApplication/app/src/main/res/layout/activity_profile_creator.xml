@@ -2,6 +2,7 @@
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/pinkPrimaryDarkChat"
     android:gravity="center"
     android:orientation="vertical">
@@ -13,6 +14,12 @@
 
         />
 
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center" />
+
     <TextView
         android:id="@+id/textViewProfile"
         android:layout_width="wrap_content"
@@ -20,16 +27,17 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="50sp"
-        android:text="Click the camera to choose your profile photo."
+        android:text="Click the image to choose your profile photo."
         android:textAlignment="center"
         android:textColor="#fff" />
 
 
     <Button
         android:id="@+id/saveButton"
-        android:layout_width="106dp"
-        android:layout_height="58dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:background="@color/darkestPink"
+        android:layout_marginBottom="10sp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
