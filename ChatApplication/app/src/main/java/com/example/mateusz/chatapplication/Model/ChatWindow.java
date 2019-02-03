@@ -8,11 +8,21 @@ public class ChatWindow {
     private String sendingUser;
     private String recievingUser;
     private String message;
+    private boolean isseen;
 
-    public ChatWindow(String sendingUser, String recievingUser, String message) {
+    public ChatWindow(String sendingUser, String recievingUser, String message, boolean isseen) {
         this.sendingUser = sendingUser;
         this.recievingUser = recievingUser;
         this.message = message;
+        this.isseen = isseen;
+    }
+
+    public boolean isIsseen() {
+        return isseen;
+    }
+
+    public void setIsseen(boolean isseen) {
+        this.isseen = isseen;
     }
 
     public ChatWindow() {

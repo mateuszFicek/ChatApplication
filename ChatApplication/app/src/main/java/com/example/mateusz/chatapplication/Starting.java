@@ -35,14 +35,12 @@ public class Starting extends AppCompatActivity {
         progressBar = findViewById(R.id.progress);
         progressBar.setVisibility(View.VISIBLE);
 
-        if(firebaseUser != null){
+        if (firebaseUser != null) {
             finish();
             startActivity(new Intent(Starting.this, Chat.class));
-        }
-        else{
+        } else {
             progressBar.setVisibility(View.GONE);
         }
-
 
 
         signUp.setOnClickListener(new View.OnClickListener() {

@@ -7,7 +7,7 @@
         />
 
     <solid
-        android:color="@color/pinkPrimaryDarkChat"
+        android:color="@color/transparent"
         />
 
 

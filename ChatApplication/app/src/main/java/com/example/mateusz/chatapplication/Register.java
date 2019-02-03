@@ -56,30 +56,30 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         findViewById(R.id.alreadyText).setOnClickListener(this);
     }
 
-    private void registerUser(){
+    private void registerUser() {
         String emailString = email.getText().toString().trim();
         String passwordString = password.getText().toString().trim();
         final String usernameString = username.getText().toString().trim();
 
-        if(emailString.isEmpty()){
+        if (emailString.isEmpty()) {
             //email is empty
             Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(passwordString.isEmpty()){
+        if (passwordString.isEmpty()) {
             //password empty
             Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(!Patterns.EMAIL_ADDRESS.matcher(emailString).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(emailString).matches()) {
             email.setError("Please enter valid email address.");
             email.requestFocus();
             return;
         }
 
-        if(passwordString.length() < 6){
+        if (passwordString.length() < 6) {
             password.setError("Minimum 6 characters.");
             password.requestFocus();
             return;
@@ -89,7 +89,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         firebaseAuth.createUserWithEmailAndPassword(emailString, passwordString).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     //user registered succesfully
                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                     assert firebaseUser != null;
@@ -105,7 +105,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                     reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 Toast.makeText(Register.this, "Registered succesfully!", Toast.LENGTH_SHORT).show();
                                 finish();
                                 startActivity(new Intent(Register.this, ProfileCreator.class));
@@ -113,8 +113,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                         }
                     });
 
-                }
-                else {
+                } else {
                     //user registration failure
                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                         Toast.makeText(getApplicationContext(), "You are already registered", Toast.LENGTH_SHORT).show();
@@ -128,11 +127,11 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     }
 
     @Override
-    public void onClick(View view){
-        if(view.getId() == R.id.signButton){
+    public void onClick(View view) {
+        if (view.getId() == R.id.signButton) {
             registerUser();
         }
-        if(view.getId() == R.id.alreadyText){
+        if (view.getId() == R.id.alreadyText) {
             //open login activity
             finish();
             startActivity(new Intent(this, Login.class));

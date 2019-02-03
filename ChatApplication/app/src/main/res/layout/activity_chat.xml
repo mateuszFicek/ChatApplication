@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/darkestPink">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -36,6 +37,7 @@
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
+            app:tabIndicatorHeight="0dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/darkestPink"
@@ -49,6 +51,7 @@
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/layout_bg"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </LinearLayout>
