@@ -17,6 +17,7 @@ import com.example.mateusz.chatapplication.Adapter.UserAdapter;
 import com.example.mateusz.chatapplication.Chat;
 import com.example.mateusz.chatapplication.Model.ChatWindow;
 import com.example.mateusz.chatapplication.Model.User;
+import com.example.mateusz.chatapplication.Notification.Token;
 import com.example.mateusz.chatapplication.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,6 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,10 +79,15 @@ public class ChatFragment extends Fragment {
 
             }
         });
-
+        updateToken(FirebaseInstanceId.getInstance().getToken());
         return view;
     }
 
+    private void updateToken(String token){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        databaseReference.child(firebaseUser.getUid()).setValue(token1);
+    }
     private void readChats() {
         userList = new ArrayList<>();
 
