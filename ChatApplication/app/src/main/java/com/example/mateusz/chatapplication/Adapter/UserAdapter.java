@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * Created by Mateusz on 30.12.2018.
+ * Adds new user to currently running view.
  */
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
@@ -57,8 +58,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             Glide.with(context).load(user.getImageURL()).into(holder.profilePicture);
         }
 
-        if (ischat){
-            if (user.getStatus().equals("online")){
+        if (ischat) {
+            if (user.getStatus().equals("online")) {
                 holder.img_on.setVisibility(View.VISIBLE);
                 holder.img_off.setVisibility(View.GONE);
             } else {

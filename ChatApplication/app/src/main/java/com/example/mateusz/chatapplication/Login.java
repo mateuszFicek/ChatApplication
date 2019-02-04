@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * Created by Mateusz on 27.12.2018.
+ * Login activity which lets you log into application when user already has created an account.
  */
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
@@ -39,6 +40,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
 
+    /**
+     * Checks if all login and password match database information.
+     */
     private void userLogin() {
         String emailStringLogin = loginEmail.getText().toString().trim();
         String passwordStringLogin = loginPassword.getText().toString().trim();

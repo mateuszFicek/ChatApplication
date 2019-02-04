@@ -12,6 +12,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Created by Mateusz on 29.12.2018.
+ * Starting activity wher user can choose to login or register into app.
+ * Starts on every app opening but switches to Chat activity if user is already logged.
  */
 
 public class Starting extends AppCompatActivity {

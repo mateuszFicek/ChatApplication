@@ -9,20 +9,21 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 
 /**
  * Created by Mateusz on 03.02.2019.
+ * Updates users token.
  */
 
 public class FirebaseIdService extends FirebaseInstanceIdService {
     @Override
-    public void onTokenRefresh(){
+    public void onTokenRefresh() {
         super.onTokenRefresh();
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String refreshToken = FirebaseInstanceId.getInstance().getToken();
-        if(firebaseUser!=null){
+        if (firebaseUser != null) {
             updateToken(refreshToken);
         }
     }
 
-    private void updateToken(String refreshToken){
+    private void updateToken(String refreshToken) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Tokens");

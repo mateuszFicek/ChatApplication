@@ -36,6 +36,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Mateusz on 28.12.2018.
+ * Profile creator activity used after creating account to set and upload profile image.
  */
 
 public class ProfileCreator extends AppCompatActivity {
@@ -56,7 +57,7 @@ public class ProfileCreator extends AppCompatActivity {
     private StorageTask<UploadTask.TaskSnapshot> uploadTask;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_creator);
 
@@ -77,12 +78,11 @@ public class ProfileCreator extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                if (!user.getImageURL().equals("default")){
+                if (!user.getImageURL().equals("default")) {
                     progressBar.setVisibility(View.VISIBLE);
                     finish();
                     startActivity(new Intent(ProfileCreator.this, Chat.class));
-                }
-                else{
+                } else {
                     progressBar.setVisibility(View.GONE);
                 }
             }
@@ -114,7 +114,7 @@ public class ProfileCreator extends AppCompatActivity {
                 uploadImage();
                 reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("imageURL", ""+profileImageUrl);
+                map.put("imageURL", "" + profileImageUrl);
                 reference.updateChildren(map);
 
             } catch (IOException e) {
@@ -123,29 +123,32 @@ public class ProfileCreator extends AppCompatActivity {
         }
     }
 
-    public void uploadImage(){
-        storageReference = FirebaseStorage.getInstance().getReference("profilepics/"+ System.currentTimeMillis()+".jpg");
+    /**
+     * Uploads profile image to data storage.
+     */
+    public void uploadImage() {
+        storageReference = FirebaseStorage.getInstance().getReference("profilepics/" + System.currentTimeMillis() + ".jpg");
         StorageTask<UploadTask.TaskSnapshot> uploadTask;
         uploadTask = storageReference.putFile(uriImage);
         uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                if (!task.isSuccessful()){
-                    throw  task.getException();
+                if (!task.isSuccessful()) {
+                    throw task.getException();
                 }
 
-                return  storageReference.getDownloadUrl();
+                return storageReference.getDownloadUrl();
             }
         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
                     String mUri = downloadUri.toString();
 
                     reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
                     HashMap<String, Object> map = new HashMap<>();
-                    map.put("imageURL", ""+mUri);
+                    map.put("imageURL", "" + mUri);
                     reference.updateChildren(map);
 
                 } else {
@@ -160,6 +163,9 @@ public class ProfileCreator extends AppCompatActivity {
         });
     }
 
+    /**
+     * Opens image chooser.
+     */
     private void openImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -168,7 +174,7 @@ public class ProfileCreator extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
     }
 }

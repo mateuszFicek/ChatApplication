@@ -25,7 +25,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Fragment which displays all users.
+ */
 public class UsersFragment extends Fragment {
 
     private FirebaseAuth firebaseAuth;
@@ -48,6 +50,9 @@ public class UsersFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Adds all users from database to recyclerView.
+     */
     private void readUsers() {
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
@@ -55,12 +60,13 @@ public class UsersFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                Users.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
                     Users.add(user);
 
                 }
-                userAdapter = new UserAdapter(getContext(), Users,false);
+                userAdapter = new UserAdapter(getContext(), Users, false);
                 recyclerView.setAdapter(userAdapter);
             }
 

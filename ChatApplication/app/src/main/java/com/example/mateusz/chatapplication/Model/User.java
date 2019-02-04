@@ -1,5 +1,9 @@
 package com.example.mateusz.chatapplication.Model;
 
+/**
+ * Created by Mateusz on 30.12.2018.
+ * Single user data - data of one user.
+ */
 public class User {
 
     private String id;

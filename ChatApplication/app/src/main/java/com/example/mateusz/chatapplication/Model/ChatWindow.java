@@ -2,6 +2,7 @@ package com.example.mateusz.chatapplication.Model;
 
 /**
  * Created by Mateusz on 30.12.2018.
+ * Single chat data - data of one message.
  */
 
 public class ChatWindow {

@@ -24,6 +24,7 @@ import java.util.List;
 
 /**
  * Created by Mateusz on 30.12.2018.
+ * Adds new messages to currently running view.
  */
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
@@ -69,15 +70,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             Glide.with(context).load(imageURL).into(holder.profilePicture);
         }
 
-        if(position==Chats.size() - 1){
-            if(chat.isIsseen()){
+        if (position == Chats.size() - 1) {
+            if (chat.isIsseen()) {
                 holder.text_seen.setText("Seen");
-            }
-            else {
+            } else {
                 holder.text_seen.setText("Delivered");
             }
-        }
-        else {
+        } else {
             holder.text_seen.setVisibility(View.GONE);
         }
     }

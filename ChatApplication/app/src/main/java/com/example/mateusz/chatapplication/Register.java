@@ -27,6 +27,7 @@ import java.util.HashMap;
 
 /**
  * Created by Mateusz on 27.12.2018.
+ * Activity in which new user can create account.
  */
 
 public class Register extends AppCompatActivity implements View.OnClickListener {
@@ -56,6 +57,9 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         findViewById(R.id.alreadyText).setOnClickListener(this);
     }
 
+    /**
+     * Adds new user to database.
+     */
     private void registerUser() {
         String emailString = email.getText().toString().trim();
         String passwordString = password.getText().toString().trim();

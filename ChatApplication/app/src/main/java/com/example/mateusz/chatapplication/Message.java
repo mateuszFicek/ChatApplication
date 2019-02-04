@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -33,9 +34,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -45,6 +55,9 @@ import retrofit2.Callback;
  * Created by Mateusz on 30.12.2018.
  */
 
+/**
+ * Message class which displays chat.
+ */
 public class Message extends AppCompatActivity {
 
     CircleImageView profilePicture;
@@ -59,6 +72,9 @@ public class Message extends AppCompatActivity {
     RecyclerView recyclerView;
     ValueEventListener seenListener;
     Intent intent;
+    byte[] encrypted;
+    String encryptedtext;
+    String decrypted;
 
     APIService apiService;
     boolean notify = false;
@@ -131,14 +147,19 @@ public class Message extends AppCompatActivity {
         seenMessage(userid);
     }
 
-    private void seenMessage(final String userid){
+    /**
+     * It updates Database when message was seen by receiving person.
+     *
+     * @param userid - id of person to whom this message will be send
+     */
+    private void seenMessage(final String userid) {
         reference = FirebaseDatabase.getInstance().getReference("Chats");
         seenListener = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ChatWindow chat = snapshot.getValue(ChatWindow.class);
-                    if (chat.getRecievingUser().equals(firebaseUser.getUid()) && chat.getSendingUser().equals(userid)){
+                    if (chat.getRecievingUser().equals(firebaseUser.getUid()) && chat.getSendingUser().equals(userid)) {
                         HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("isseen", true);
                         snapshot.getRef().updateChildren(hashMap);
@@ -152,13 +173,23 @@ public class Message extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * It sends the message to given person.
+     * Sending means putting message into database.
+     * Also sends notification when sending is successful.
+     *
+     * @param sendingUser   - id of person who sends the message
+     * @param recievingUser - id of person who receives message
+     * @param message       - message body
+     */
     public void sendMessage(String sendingUser, final String recievingUser, String message) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sendingUser", sendingUser);
         hashMap.put("recievingUser", recievingUser);
-        hashMap.put("message", message);
+        hashMap.put("message", Encrypt(message));
         hashMap.put("isseen", false);
         reference.child("Chats").push().setValue(hashMap);
 
@@ -169,7 +200,8 @@ public class Message extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                if(notify) {
+
+                if (notify) {
                     sendNotification(recievingUser, user.getUsername(), msg);
                 }
                 notify = false;
@@ -182,21 +214,28 @@ public class Message extends AppCompatActivity {
         });
     }
 
-    private void sendNotification(String reciever, final String username, final String message){
+    /**
+     * Sends notification to person who will receive the message.
+     *
+     * @param reciever - id of receiving person
+     * @param username - username of sending person
+     * @param message  - message that will be displayed in notification
+     */
+    private void sendNotification(String reciever, final String username, final String message) {
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
         Query query = tokens.orderByKey().equalTo(reciever);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", userid);
+                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username + ": " + message, "New Message", userid);
                     Sender sender = new Sender(data, token.getToken());
                     apiService.sendNotification(sender).enqueue(new Callback<Response>() {
                         @Override
                         public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                            if(response.code() == 200){
-                                if(response.body().success != 1){
+                            if (response.code() == 200) {
+                                if (response.body().success != 1) {
                                     Toast.makeText(Message.this, "Failed", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -218,6 +257,13 @@ public class Message extends AppCompatActivity {
     }
 
 
+    /**
+     * Reads messages from database and puts them into recyclerView.
+     *
+     * @param userId    - id of sending person
+     * @param reciverId - id of receiving person
+     * @param imageUrl  - Url to profile picture
+     */
     private void readMessages(final String userId, final String reciverId, final String imageUrl) {
         chats = new ArrayList<>();
         reference = FirebaseDatabase.getInstance().getReference("Chats");
@@ -228,6 +274,7 @@ public class Message extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ChatWindow chat = snapshot.getValue(ChatWindow.class);
                     if (chat.getRecievingUser().equals(userId) && chat.getSendingUser().equals(reciverId) || chat.getRecievingUser().equals(reciverId) && chat.getSendingUser().equals(userId)) {
+                        chat.setMessage(Decrypt(chat.getMessage()));
                         chats.add(chat);
                     }
                 }
@@ -243,8 +290,23 @@ public class Message extends AppCompatActivity {
 
     }
 
+    /**
+     * Checks if currently user is using app.
+     *
+     * @param userid - id of user
+     */
+    private void currentUser(String userid) {
+        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        editor.putString("currentuser", userid);
+        editor.apply();
+    }
 
-    private void status(String status){
+    /**
+     * Changes status when person starts/exists app.
+     *
+     * @param status - status type
+     */
+    private void status(String status) {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -253,16 +315,79 @@ public class Message extends AppCompatActivity {
         reference.updateChildren(hashMap);
     }
 
+    /**
+     * Changes the status when person starts app.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         status("online");
+        currentUser(userid);
     }
 
+    /**
+     * Changes the status when person exists app.
+     */
     @Override
     protected void onPause() {
         super.onPause();
         reference.removeEventListener(seenListener);
         status("offline");
+        currentUser("none");
     }
+
+    /**
+     * Encrypts given String.
+     *
+     * @param pInput - given string
+     * @return - encrypted string
+     */
+    public String Encrypt(String pInput) {
+
+        try {
+
+            String Input = pInput;
+            String key = "Bar12345Bar12345Bar12345Bar12345";
+
+            SecretKeySpec aesKey = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+
+            cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+            byte[] encrypted = cipher.doFinal(Input.getBytes());
+            encryptedtext = Base64.encodeToString(encrypted, Base64.DEFAULT);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return encryptedtext;
+    }
+
+    /**
+     * Decrypts given String.
+     *
+     * @param pInput - given string
+     * @return - decrypted string
+     */
+    public String Decrypt(String pInput) {
+
+        try {
+
+            String Input = pInput;
+
+            String key = "Bar12345Bar12345Bar12345Bar12345";
+
+            SecretKeySpec aesKey = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+
+            cipher.init(Cipher.DECRYPT_MODE, aesKey);
+            byte[] data = Base64.decode(Input, Base64.DEFAULT);
+            decrypted = new String(cipher.doFinal(data));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return decrypted;
+    }
+
 }

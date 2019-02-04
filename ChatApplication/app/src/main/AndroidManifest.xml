@@ -21,7 +21,8 @@
         <activity android:name=".ProfileCreator" />
         <activity android:name=".Chat" />
         <activity android:name=".Register"/>
-        <activity android:name=".Message"/>
+        <activity android:name=".Message"
+            android:launchMode="singleTask"/>
 
         <service android:name=".Notification.FirebaseIdService"
             android:enabled="true"

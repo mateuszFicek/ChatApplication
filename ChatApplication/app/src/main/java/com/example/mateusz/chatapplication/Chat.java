@@ -39,6 +39,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Mateusz on 27.12.2018.
+ * Main activity which displays chats and users in two fragments.
  */
 
 public class Chat extends AppCompatActivity {
@@ -131,7 +132,7 @@ public class Chat extends AppCompatActivity {
         }
     }
 
-    private void status(String status){
+    private void status(String status) {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
 
         HashMap<String, Object> hashMap = new HashMap<>();
