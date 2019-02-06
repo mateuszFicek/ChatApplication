@@ -10,6 +10,7 @@ import retrofit2.http.POST;
 
 /**
  * Created by Mateusz on 03.02.2019.
+ * Interface to send notification using Firebase Authorization key.
  */
 
 public interface APIService {

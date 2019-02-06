@@ -90,6 +90,8 @@ public class ProfileCreator extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
+
+
         });
 
         findViewById(R.id.saveButton).setOnClickListener(new View.OnClickListener() {

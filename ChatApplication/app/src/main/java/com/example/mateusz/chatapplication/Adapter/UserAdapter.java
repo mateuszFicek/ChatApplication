@@ -48,6 +48,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return new UserAdapter.ViewHolder(view);
     }
 
+    /**
+     * Adds users and their profile images.
+     * Also when clicked goes to messages with user.
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final User user = Users.get(position);

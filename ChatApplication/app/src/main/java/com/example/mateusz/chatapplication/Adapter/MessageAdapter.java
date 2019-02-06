@@ -25,6 +25,7 @@ import java.util.List;
 /**
  * Created by Mateusz on 30.12.2018.
  * Adds new messages to currently running view.
+ * Determines on which part of view should the message be showed.
  */
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
@@ -47,6 +48,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.imageURL = imageURL;
     }
 
+    /**
+     * Adds messages to view.
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -59,6 +66,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
     }
 
+    /**
+     * Adds profile image next to message.
+     * @param holder - message
+     * @param position - position in chat
+     */
     @Override
     public void onBindViewHolder(MessageAdapter.ViewHolder holder, int position) {
 
@@ -86,6 +98,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         return Chats.size();
     }
 
+    /**
+     * Keeps one item in RecyclerView.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView show_message;
         ImageView profilePicture;
@@ -96,10 +111,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             show_message = itemView.findViewById(R.id.show_message);
             profilePicture = itemView.findViewById(R.id.profile_image);
             text_seen = itemView.findViewById(R.id.txt_seen);
-
         }
     }
 
+    /**
+     * Determines if message should be shown left or right.
+     * @param position
+     * @return - position of user who send the message
+     */
     @Override
     public int getItemViewType(int position) {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

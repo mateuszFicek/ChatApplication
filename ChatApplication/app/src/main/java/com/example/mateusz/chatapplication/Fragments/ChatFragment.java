@@ -35,6 +35,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Chat fragment used in Chat activity.
+ * Shows all users to whom user had send message.
+ */
 
 public class ChatFragment extends Fragment {
 
@@ -89,6 +93,10 @@ public class ChatFragment extends Fragment {
         databaseReference.child(firebaseUser.getUid()).setValue(token1);
     }
 
+    /**
+     * Gets all users to who user send message.
+     * Adds them to list which is used to create recyclerView.
+     */
     private void readChats() {
         userList = new ArrayList<>();
 
